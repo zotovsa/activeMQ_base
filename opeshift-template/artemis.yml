@@ -41,7 +41,7 @@ objects:
     source:
       git:
         ref: master
-        uri: https://github.com/zotovsa/activeMQ_base.git
+        uri: http://gitlab.nmdemo:10080/nmca-poc/activemq-artemis.git
       contextDir: docker
       type: Git
     strategy:
@@ -58,7 +58,7 @@ objects:
     creationTimestamp: null
     name: artemis-cluster
   spec:
-    replicas: 3
+    replicas: 1
     selector:
       deploymentconfig: artemis-cluster
     strategy:
@@ -112,7 +112,7 @@ objects:
             protocol: TCP
           resources: {}
           volumeMounts:
-          - mountPath: /etc/message-volume
+          - mountPath: /var/lib/artemis/data
             name: message-volume
           terminationMessagePath: /dev/termination-log
         dnsPolicy: ClusterFirst

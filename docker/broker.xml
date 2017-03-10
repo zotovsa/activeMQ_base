@@ -14,13 +14,13 @@
 
         <journal-type>NIO</journal-type>
 
-        <bindings-directory>./data/bindings</bindings-directory>
+        <bindings-directory>/var/lib/artemis/data/bindings</bindings-directory>
 
-        <journal-directory>./data/journal</journal-directory>
+        <journal-directory>/var/lib/artemis/data/journal</journal-directory>
 
-        <large-messages-directory>./data/largemessages</large-messages-directory>
+        <large-messages-directory>/var/lib/artemis/data/largemessages</large-messages-directory>
 
-        <paging-directory>./data/paging</paging-directory>
+        <paging-directory>/var/lib/artemis/data/paging</paging-directory>
 
         <!-- Connectors -->
         <connectors>

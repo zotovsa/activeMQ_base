@@ -79,8 +79,8 @@ COPY docker-entrypoint.sh /
 
 COPY common-0.9.0.jar /opt/apache-artemis-1.5.3/lib
 COPY dns-0.9.0.jar /opt/apache-artemis-1.5.3/lib
-#COPY broker.xml /var/lib/artemis/etc
-COPY broker-no-ssl.xml /var/lib/artemis/etc/broker.xml
+COPY broker.xml /var/lib/artemis/etc
+#COPY broker-no-ssl.xml /var/lib/artemis/etc/broker.xml
 
 COPY jgroups.xml /var/lib/artemis/etc
 COPY logging.properties /var/lib/artemis/etc
