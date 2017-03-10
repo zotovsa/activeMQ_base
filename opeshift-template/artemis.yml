@@ -41,7 +41,7 @@ objects:
     source:
       git:
         ref: master
-        uri: http://gitlab.nmdemo:10080/nmca-poc/activemq-artemis.git
+        uri: https://github.com/zotovsa/activeMQ_base.git
       contextDir: docker
       type: Git
     strategy:
