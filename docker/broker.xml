@@ -1,0 +1,112 @@
+<?xml version='1.0'?>
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xmlns="urn:activemq"
+               xsi:schemaLocation="urn:activemq /schema/artemis-server.xsd">
+
+    <jms xmlns="urn:activemq:jms">
+        <!--the queue used by the example-->
+        <queue name="dataQueue"/>
+    </jms>
+
+    <core xmlns="urn:activemq:core">
+
+        <persistence-enabled>true</persistence-enabled>
+
+        <journal-type>NIO</journal-type>
+
+        <bindings-directory>./data/bindings</bindings-directory>
+
+        <journal-directory>./data/journal</journal-directory>
+
+        <large-messages-directory>./data/largemessages</large-messages-directory>
+
+        <paging-directory>./data/paging</paging-directory>
+
+        <!-- Connectors -->
+        <connectors>
+            <connector name="netty-connector">tcp://0.0.0.0:61616?sslEnabled=true;trustStorePath=/var/lib/artemis/etc/broker.jks;trustStorePassword=123456;enabledProtocols=TLSv1.2</connector>
+            <connector name="invm-connector">vm://0?sslEnabled=true;trustStorePath=/var/lib/artemis/etc/broker.jks;trustStorePassword=123456;enabledProtocols=TLSv1.2</connector>
+        </connectors>
+
+        <!-- Acceptors -->
+        <acceptors>
+            <acceptor name="invm-acceptor">vm://0?sslEnabled=true;keyStorePath=/var/lib/artemis/etc/broker.jks;keyStorePassword=123456;enabledProtocols=TLSv1.2</acceptor>
+            <acceptor name="netty-acceptor">tcp://0.0.0.0:61616?sslEnabled=true;keyStorePath=/var/lib/artemis/etc/broker.jks;keyStorePassword=123456;enabledProtocols=TLSv1.2</acceptor>
+        </acceptors>
+
+        <!-- Clustering configuration -->
+
+        <broadcast-groups>
+            <broadcast-group name="my-broadcast-group">
+                <broadcast-period>5000</broadcast-period>
+                <jgroups-file>jgroups.xml</jgroups-file>
+                <jgroups-channel>active_broadcast_channel</jgroups-channel>
+                <connector-ref>netty-connector</connector-ref>
+            </broadcast-group>
+        </broadcast-groups>
+
+        <discovery-groups>
+            <discovery-group name="my-discovery-group">
+                <jgroups-file>jgroups.xml</jgroups-file>
+                <jgroups-channel>active_broadcast_channel</jgroups-channel>
+                <refresh-timeout>10000</refresh-timeout>
+            </discovery-group>
+        </discovery-groups>
+
+        <ha-policy>
+            <replication>
+                <colocated>
+                    <backup-port-offset>100</backup-port-offset>
+                    <backup-request-retries>-1</backup-request-retries>
+                    <backup-request-retry-interval>2000</backup-request-retry-interval>
+                    <max-backups>3</max-backups>
+                    <request-backup>true</request-backup>
+                    <master>
+                        <check-for-live-server>true</check-for-live-server>
+                    </master>
+                    <slave>
+                        <scale-down/>
+                    </slave>
+                </colocated>
+            </replication>
+        </ha-policy>
+
+        <cluster-connections>
+            <cluster-connection name="my-cluster">
+                <address>jms</address>
+                <connector-ref>netty-connector</connector-ref>
+                <call-timeout>2000</call-timeout>
+                <retry-interval>500</retry-interval>
+                <!-- since the backup servers scale down we need a sensible setting here so the bridge will stop -->
+                <reconnect-attempts>5</reconnect-attempts>
+                <use-duplicate-detection>true</use-duplicate-detection>
+                <!-- forward messages to a node if there are queues which have consumers -->
+                <message-load-balancing>ON_DEMAND</message-load-balancing>
+                <max-hops>1</max-hops>
+                <call-failover-timeout>2000</call-failover-timeout>
+                <discovery-group-ref discovery-group-name="my-discovery-group"/>
+            </cluster-connection>
+        </cluster-connections>
+
+        <!-- Other config -->
+
+        <security-settings>
+            <!--security for example queue-->
+            <security-setting match="jms.#">
+                <permission type="createDurableQueue" roles="admin"/>
+                <permission type="deleteDurableQueue" roles="admin"/>
+                <permission type="createNonDurableQueue" roles="admin"/>
+                <permission type="deleteNonDurableQueue" roles="admin"/>
+                <permission type="consume" roles="admin"/>
+                <permission type="send" roles="admin"/>
+            </security-setting>
+        </security-settings>
+
+        <address-settings>
+            <address-setting match="jms.#">
+                <redistribution-delay>0</redistribution-delay>
+            </address-setting>
+        </address-settings>
+
+    </core>
+</configuration>

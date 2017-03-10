@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: message-volume
+  annotations:
+    description: "Message Volume"
+    iconClass: "icon-jboss"
+    tags: "message,api"
+objects:
+- apiVersion: "v1"
+  kind: "PersistentVolumeClaim"
+  metadata:
+    name: "claim1"
+  spec:
+    accessModes:
+      - "ReadWriteMany"
+    resources:
+      requests:
+        storage: "1Gi"
+#    volumeName: "pv03"

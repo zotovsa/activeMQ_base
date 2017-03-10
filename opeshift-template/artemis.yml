@@ -1,0 +1,208 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: artemis-cluster
+  annotations:
+    description: "Artemis ActiveMQ cluster"
+    iconClass: "icon-jboss"
+    tags: "artemis"
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: centos
+  spec:
+    dockerImageRepository: centos
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: rhel7
+  spec:
+    dockerImageRepository: registry.access.redhat.com/rhel7/rhel
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: artemis-cluster-base
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    name: artemis-cluster-base
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: artemis-cluster-base:latest
+    resources: {}
+    source:
+      git:
+        ref: master
+        uri: http://gitlab.nmdemo:10080/nmca-poc/activemq-artemis.git
+      contextDir: docker
+      type: Git
+    strategy:
+      type: Docker
+    triggers:
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    name: artemis-cluster
+  spec:
+    replicas: 3
+    selector:
+      deploymentconfig: artemis-cluster
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          deploymentconfig: artemis-cluster
+      spec:
+        volumes:
+        - name: message-volume
+          persistentVolumeClaim:
+            claimName: claim1
+        containers:
+        - env:
+          - name: OPENSHIFT_DNS_PING_SERVICE_NAME
+            value: artemis-cluster-nodes
+          image: artemis-cluster-base:latest
+          imagePullPolicy: Always
+          name: artemis-cluster
+          livenessProbe:
+            tcpSocket:
+              port: 8161
+            initialDelaySeconds: 30
+            timeoutSeconds: 1
+          ports:
+          - containerPort: 8161
+            protocol: TCP
+          - containerPort: 61616
+            protocol: TCP
+          - containerPort: 5445
+            protocol: TCP
+          - containerPort: 5672
+            protocol: TCP
+          - containerPort: 1883
+            protocol: TCP
+          - containerPort: 61613
+            protocol: TCP
+          - containerPort: 8888
+            protocol: TCP
+          - containerPort: 7080
+            protocol: TCP
+          - containerPort: 7081
+            protocol: TCP
+          resources: {}
+          volumeMounts:
+          - mountPath: /etc/message-volume
+            name: message-volume
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - artemis-cluster
+        from:
+          kind: ImageStreamTag
+          name: artemis-cluster-base:latest
+      type: ImageChange
+  status: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: artemis-cluster-nodes
+  spec:
+    ports:
+    - name: 8888-tcp
+      port: 8888
+      protocol: TCP
+      targetPort: 8888
+    - name: 7080-tcp
+      port: 7080
+      protocol: TCP
+      targetPort: 7080
+    - name: 7081-tcp
+      port: 7081
+      protocol: TCP
+      targetPort: 7081
+    selector:
+      deploymentconfig: artemis-cluster
+    sessionAffinity: None
+    type: ClusterIP
+    portalIP: None
+    clusterIP: None
+  status:
+    loadBalancer: {}
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: artemis-cluster
+  spec:
+    ports:
+    - name: 8161-tcp
+      port: 8161
+      protocol: TCP
+      targetPort: 8161
+    - name: 61616-tcp
+      port: 61616
+      protocol: TCP
+      targetPort: 61616
+    - name: 5445-tcp
+      port: 5445
+      protocol: TCP
+      targetPort: 5445
+    - name: 5672-tcp
+      port: 5672
+      protocol: TCP
+      targetPort: 5672
+    - name: 1883-tcp
+      port: 1883
+      protocol: TCP
+      targetPort: 1883
+    - name: 61613-tcp
+      port: 61613
+      protocol: TCP
+      targetPort: 61613
+    - name: 8888-tcp
+      port: 8888
+      protocol: TCP
+      targetPort: 8888
+    - name: 7080-tcp
+      port: 7080
+      protocol: TCP
+      targetPort: 7080
+    - name: 7081-tcp
+      port: 7081
+      protocol: TCP
+      targetPort: 7081
+    selector:
+      deploymentconfig: artemis-cluster
+    sessionAffinity: None
+    type: ClusterIP
+  status:
+    loadBalancer: {}
