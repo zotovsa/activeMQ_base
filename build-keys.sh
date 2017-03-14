@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+
+keytool -genkey -alias localhost  -keyalg RSA  -validity 500 -keypass 12345678 -storepass 12345678  -dname "C=NET, O=ACME.org, OU=IT Division"  -ext "san=ip:127.0.0.1,dns:localhost,uri:https://localhost"  -keystore standalone/configuration/localhost.jks
+
+
 keytool -import -alias root -keystore broker.jks -trustcacerts -file rootCA.crt -storepass 123456
 keytool -genkey -alias broker -keyalg RSA -keystore broker.jks -storepass 123456
 keytool -certreq -keyalg RSA -alias broker -file broker.csr -keystore broker.jks  -storepass 123456

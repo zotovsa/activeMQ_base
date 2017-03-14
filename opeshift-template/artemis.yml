@@ -58,7 +58,7 @@ objects:
     creationTimestamp: null
     name: artemis-cluster
   spec:
-    replicas: 1
+    replicas: 3
     selector:
       deploymentconfig: artemis-cluster
     strategy:
@@ -90,7 +90,7 @@ objects:
             tcpSocket:
               port: 8161
             initialDelaySeconds: 30
-            timeoutSeconds: 1
+            timeoutSeconds: 10
           ports:
           - containerPort: 8161
             protocol: TCP

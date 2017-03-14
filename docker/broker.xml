@@ -54,22 +54,37 @@
         </discovery-groups>
 
         <ha-policy>
-            <replication>
+            <shared-store>
                 <colocated>
-                    <backup-port-offset>100</backup-port-offset>
                     <backup-request-retries>-1</backup-request-retries>
-                    <backup-request-retry-interval>2000</backup-request-retry-interval>
+                    <backup-request-retry-interval>100</backup-request-retry-interval>
                     <max-backups>3</max-backups>
-                    <request-backup>true</request-backup>
+                    <request-backup>false</request-backup>
+                    <backup-port-offset>100</backup-port-offset>
                     <master>
-                        <check-for-live-server>true</check-for-live-server>
+                        <failover-on-shutdown>false</failover-on-shutdown>
                     </master>
-                    <slave>
-                        <scale-down/>
-                    </slave>
                 </colocated>
-            </replication>
+            </shared-store>
         </ha-policy>
+
+        <!--<ha-policy>-->
+            <!--<replication>-->
+                <!--<colocated>-->
+                    <!--<backup-port-offset>100</backup-port-offset>-->
+                    <!--<backup-request-retries>-1</backup-request-retries>-->
+                    <!--<backup-request-retry-interval>2000</backup-request-retry-interval>-->
+                    <!--<max-backups>3</max-backups>-->
+                    <!--<request-backup>true</request-backup>-->
+                    <!--<master>-->
+                        <!--<check-for-live-server>true</check-for-live-server>-->
+                    <!--</master>-->
+                    <!--<slave>-->
+                        <!--<scale-down/>-->
+                    <!--</slave>-->
+                <!--</colocated>-->
+            <!--</replication>-->
+        <!--</ha-policy>-->
 
         <cluster-connections>
             <cluster-connection name="my-cluster">
