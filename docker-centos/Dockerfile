@@ -34,7 +34,7 @@ RUN yum -y upgrade && yum -y install \
     tar  \
     wget && yum clean all -y
 
-RUN wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/$JAVA_VERSION-$BUILD_VERSION/jdk-$JAVA_VERSION-linux-x64.rpm" -O /tmp/jdk-8-linux-x64.rpm
+RUN wget -nv--no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/$JAVA_VERSION-$BUILD_VERSION/jdk-$JAVA_VERSION-linux-x64.rpm" -O /tmp/jdk-8-linux-x64.rpm
 
 RUN yum -y install /tmp/jdk-8-linux-x64.rpm \
     && yum clean all -y
@@ -69,13 +69,24 @@ ENV JAVA_HOME=/usr/java/latest \
 ##    chmod +x /usr/local/bin/gosu
 
 # Setup gosu for easier command execution
-RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
-    && curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64" \
-    && curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64.asc" \
-    && gpg --verify /usr/local/bin/gosu.asc \
-    && rm /usr/local/bin/gosu.asc \
-    && rm -r /root/.gnupg/ \
-    && chmod +x /usr/local/bin/gosu
+#RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 && \
+#    curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64" && \
+#    curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64.asc" && \
+#    gpg --verify /usr/local/bin/gosu.asc && \
+#    rm /usr/local/bin/gosu.asc && \
+#    rm -r /root/.gnupg/ && \
+#    chmod +x /usr/local/bin/gosu
+
+
+
+RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
+RUN curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64"
+RUN curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64.asc"
+RUN gpg --verify /usr/local/bin/gosu.asc
+RUN rm /usr/local/bin/gosu.asc 
+RUN rm -r /root/.gnupg/ 
+RUN chmod +x /usr/local/bin/gosu
+
 
 
 # Uncompress and validate
@@ -92,7 +103,7 @@ RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4
 
 # Uncompress and validate
 RUN cd /opt && \
-    wget -q http://www-us.apache.org/dist/activemq/activemq-artemis/$ARTEMIS_VERSION/apache-artemis-$ARTEMIS_VERSION-bin.tar.gz && \
+    wget -nv -q http://www-us.apache.org/dist/activemq/activemq-artemis/$ARTEMIS_VERSION/apache-artemis-$ARTEMIS_VERSION-bin.tar.gz && \
     tar xfz apache-artemis-$ARTEMIS_VERSION-bin.tar.gz && \
     ln -s apache-artemis-$ARTEMIS_VERSION apache-artemis && \
     rm -f apache-artemis-$ARTEMIS_VERSION-bin.tar.gz
