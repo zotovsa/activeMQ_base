@@ -15,13 +15,12 @@ LABEL io.k8s.description="ActiveMQ Artemis Builder Image." \
 
 ##
 # ActiveMQ Artemis
-ENV ARTEMIS_VERSION 1.3.0
+ENV ARTEMIS_VERSION 1.5.3
 ENV ARTEMIS_INSTANCE_HOME /var/lib/artemis
 
 # Java jdk 8
 ENV JAVA_VERSION 8u101
 ENV BUILD_VERSION b13
-
 
 
 # add user and group for artemis
