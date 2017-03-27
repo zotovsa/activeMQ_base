@@ -1,10 +1,48 @@
 # ActiveMQ Apollo 1.2.0
 
-FROM java:8
-MAINTAINER Victor Romero <victor.romero@gmail.com>
+##   FROM java:8
+FROM centos:centos7
+
+##   MAINTAINER Victor Romero <victor.romero@gmail.com>
+MAINTAINER Sergei Zotov <szotov@forsythe.com>
+
+##
+# Set labels used in OpenShift to describe the builder images
+LABEL io.k8s.description="ActiveMQ Artemis Builder Image." \
+      io.k8s.display-name="ActiveMQ Artemis" \
+      io.openshift.expose-services="8161:http,61616:all-amq-protocols,5672:amqp" \
+      io.openshift.tags="builder,activemq,artemis"
+
 
 # add user and group for artemis
-RUN groupadd -r artemis && useradd -r -g artemis artemis
+##RUN groupadd -r artemis && useradd -r -g artemis artemis
+RUN groupadd -g 1001 -r artemis && useradd -u 1000 -r -g artemis -d ${ARTEMIS_INSTANCE_HOME} artemis
+
+##
+# Upgrading system, download java
+RUN yum -y upgrade && yum -y install \
+    curl  \
+    tar  \
+    wget && yum clean all -y
+
+RUN wget --no-cookies --no-check-certificate --header "Cookie: oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/$JAVA_VERSION-$BUILD_VERSION/jdk-$JAVA_VERSION-linux-x64.rpm" -O /tmp/jdk-8-linux-x64.rpm
+
+RUN yum -y install /tmp/jdk-8-linux-x64.rpm \
+    && yum clean all -y
+
+RUN alternatives --install /usr/bin/java jar /usr/java/latest/bin/java 200000 \
+ && alternatives --install /usr/bin/javaws javaws /usr/java/latest/bin/javaws 200000 \
+ && alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 200000
+
+
+ENV JAVA_HOME /usr/java/latest
+ENV PATH=$JAVA_HOME/bin:$PATH
+
+
+
+
+
+
 
 RUN apt-get -qq -o=Dpkg::Use-Pty=0 update && apt-get -qq -o=Dpkg::Use-Pty=0 upgrade -y && \
   apt-get -qq -o=Dpkg::Use-Pty=0 install -y --no-install-recommends libaio1 xmlstarlet && \
@@ -89,3 +127,4 @@ COPY broker.jks /var/lib/artemis/etc
 RUN chmod a+x /docker-entrypoint.sh
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["artemis-server"]
+
