@@ -15,12 +15,12 @@ LABEL io.k8s.description="ActiveMQ Artemis Builder Image." \
 
 ##
 # ActiveMQ Artemis
-ENV ARTEMIS_VERSION 1.5.3
-ENV ARTEMIS_INSTANCE_HOME /var/lib/artemis
+ENV ARTEMIS_VERSION=1.5.3 \
+    ARTEMIS_INSTANCE_HOME=/var/lib/artemis
 
 # Java jdk 8
-ENV JAVA_VERSION 8u101
-ENV BUILD_VERSION b13
+ENV JAVA_VERSION=8u101 \
+    BUILD_VERSION=b13
 
 
 # add user and group for artemis
@@ -44,41 +44,63 @@ RUN alternatives --install /usr/bin/java jar /usr/java/latest/bin/java 200000 \
  && alternatives --install /usr/bin/javac javac /usr/java/latest/bin/javac 200000
 
 
-ENV JAVA_HOME /usr/java/latest
-ENV PATH=$JAVA_HOME/bin:$PATH
+ENV JAVA_HOME=/usr/java/latest \
+    PATH=$JAVA_HOME/bin:$PATH
 
 
 
 
 
 
-
-RUN apt-get -qq -o=Dpkg::Use-Pty=0 update && apt-get -qq -o=Dpkg::Use-Pty=0 upgrade -y && \
-  apt-get -qq -o=Dpkg::Use-Pty=0 install -y --no-install-recommends libaio1 xmlstarlet && \
-  rm -rf /var/lib/apt/lists/*
+##RUN apt-get -qq -o=Dpkg::Use-Pty=0 update && \
+##    apt-get -qq -o=Dpkg::Use-Pty=0 upgrade -y && \
+##    apt-get -qq -o=Dpkg::Use-Pty=0 install -y --no-install-recommends libaio1 xmlstarlet && \
+##    rm -rf /var/lib/apt/lists/*
 
 # grab gosu for easy step-down from root
-RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN apt-get -qq -o=Dpkg::Use-Pty=0 update && apt-get -qq install -y --no-install-recommends ca-certificates wget && rm -rf /var/lib/apt/lists/* \
-	&& wget -q -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture)" \
-	&& wget -q -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture).asc" \
-	&& gpg --verify /usr/local/bin/gosu.asc \
-	&& rm /usr/local/bin/gosu.asc \
-	&& chmod +x /usr/local/bin/gosu
+##RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
+##RUN apt-get -qq -o=Dpkg::Use-Pty=0 update && \
+##    apt-get -qq install -y --no-install-recommends ca-certificates wget && \
+##    rm -rf /var/lib/apt/lists/* && \
+##    wget -q -O /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture)" && \
+##    wget -q -O /usr/local/bin/gosu.asc "https://github.com/tianon/gosu/releases/download/1.2/gosu-$(dpkg --print-architecture).asc" && \
+##    gpg --verify /usr/local/bin/gosu.asc && \
+##    rm /usr/local/bin/gosu.asc && \
+##    chmod +x /usr/local/bin/gosu
+
+# Setup gosu for easier command execution
+RUN gpg --keyserver pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4 \
+    && curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64" \
+    && curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/1.9/gosu-amd64.asc" \
+    && gpg --verify /usr/local/bin/gosu.asc \
+    && rm /usr/local/bin/gosu.asc \
+    && rm -r /root/.gnupg/ \
+    && chmod +x /usr/local/bin/gosu
+
 
 # Uncompress and validate
-RUN cd /opt && wget -q http://www-us.apache.org/dist/activemq/activemq-artemis/1.5.3/apache-artemis-1.5.3-bin.tar.gz && \
-  wget -q http://www.us.apache.org/dist/activemq/activemq-artemis/1.5.3/apache-artemis-1.5.3-bin.tar.gz.asc && \
-  wget -q http://apache.org/dist/activemq/KEYS && \
-  gpg --import KEYS && \
-  gpg apache-artemis-1.5.3-bin.tar.gz.asc && \
-  tar xfz apache-artemis-1.5.3-bin.tar.gz && \
-  ln -s apache-artemis-1.5.3 apache-artemis && \
-  rm -f apache-artemis-1.5.3-bin.tar.gz KEYS apache-artemis-1.5.3-bin.tar.gz.asc
+##RUN cd /opt && wget -q http://www-us.apache.org/dist/activemq/activemq-artemis/1.5.3/apache-artemis-1.5.3-bin.tar.gz && \
+##  wget -q http://www.us.apache.org/dist/activemq/activemq-artemis/1.5.3/apache-artemis-1.5.3-bin.tar.gz.asc && \
+##  wget -q http://apache.org/dist/activemq/KEYS && \
+##  gpg --import KEYS && \
+##  gpg apache-artemis-1.5.3-bin.tar.gz.asc && \
+##  tar xfz apache-artemis-1.5.3-bin.tar.gz && \
+##  ln -s apache-artemis-1.5.3 apache-artemis && \
+##  rm -f apache-artemis-1.5.3-bin.tar.gz KEYS apache-artemis-1.5.3-bin.tar.gz.asc
+
+
+
+# Uncompress and validate
+RUN cd /opt && \
+    wget -q http://www-us.apache.org/dist/activemq/activemq-artemis/$ARTEMIS_VERSION/apache-artemis-$ARTEMIS_VERSION-bin.tar.gz && \
+    tar xfz apache-artemis-$ARTEMIS_VERSION-bin.tar.gz && \
+    ln -s apache-artemis-$ARTEMIS_VERSION apache-artemis && \
+    rm -f apache-artemis-$ARTEMIS_VERSION-bin.tar.gz
+
 
 # Create broker instance
 RUN cd /var/lib && \
-  /opt/apache-artemis-1.5.3/bin/artemis create artemis \
+  /opt/apache-artemis-$ARTEMIS_VERSION/bin/artemis create artemis \
     --home /opt/apache-artemis \
     --user artemis \
     --password artemis \
@@ -87,12 +109,17 @@ RUN cd /var/lib && \
 
 # Ports are only exposed with an explicit argument, there is no need to binding
 # the web console to localhost
-RUN cd /var/lib/artemis/etc && \
+RUN cd ${ARTEMIS_INSTANCE_HOME}/etc && \
   xmlstarlet ed -L -N amq="http://activemq.org/schema" \
     -u "/amq:broker/amq:web/@bind" \
     -v "http://0.0.0.0:8161" bootstrap.xml
 
-RUN chown -R artemis.artemis /var/lib/artemis
+RUN chown -R artemis.artemis ${ARTEMIS_INSTANCE_HOME}
+
+### !!!!! SHOULD WE USE NEXT??????
+RUN chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/data && chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/tmp 
+
+
 
 # Web Server
 EXPOSE 8161
@@ -115,6 +142,12 @@ EXPOSE 61613
 # Port for JGroups channels
 EXPOSE 7080 7081
 
+
+
+
+
+
+
 # Expose some outstanding folders
 VOLUME ["/var/lib/artemis/data"]
 VOLUME ["/var/lib/artemis/tmp"]
@@ -124,16 +157,22 @@ WORKDIR /var/lib/artemis/bin
 
 COPY docker-entrypoint.sh /
 
-COPY common-0.9.0.jar /opt/apache-artemis-1.5.3/lib
-COPY dns-0.9.0.jar /opt/apache-artemis-1.5.3/lib
-COPY broker.xml /var/lib/artemis/etc
-#COPY broker-no-ssl.xml /var/lib/artemis/etc/broker.xml
+COPY common-0.9.0.jar /opt/$ARTEMIS_VERSION/lib
+COPY dns-0.9.0.jar /opt/$ARTEMIS_VERSION/lib
+COPY broker.xml ${ARTEMIS_INSTANCE_HOME}/etc
+#COPY broker-no-ssl.xml ${ARTEMIS_INSTANCE_HOME}/etc/broker.xml
 
-COPY jgroups.xml /var/lib/artemis/etc
-COPY logging.properties /var/lib/artemis/etc
-COPY broker.jks /var/lib/artemis/etc
+COPY jgroups.xml ${ARTEMIS_INSTANCE_HOME}c
+COPY logging.properties ${ARTEMIS_INSTANCE_HOME}/etc
+COPY broker.jks ${ARTEMIS_INSTANCE_HOME}/etc
 
 RUN chmod a+x /docker-entrypoint.sh
+
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["artemis-server"]
+
+
+
+
 
