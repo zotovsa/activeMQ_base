@@ -13,6 +13,16 @@ LABEL io.k8s.description="ActiveMQ Artemis Builder Image." \
       io.openshift.expose-services="8161:http,61616:all-amq-protocols,5672:amqp" \
       io.openshift.tags="builder,activemq,artemis"
 
+##
+# ActiveMQ Artemis
+ENV ARTEMIS_VERSION 1.3.0
+ENV ARTEMIS_INSTANCE_HOME /var/lib/artemis
+
+# Java jdk 8
+ENV JAVA_VERSION 8u101
+ENV BUILD_VERSION b13
+
+
 
 # add user and group for artemis
 ##RUN groupadd -r artemis && useradd -r -g artemis artemis
