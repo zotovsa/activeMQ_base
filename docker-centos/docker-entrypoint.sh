@@ -1,5 +1,5 @@
 #!/bin/bash
-#set -e
+set -e
 whoami
 
 # Log to tty to enable docker logs container-name
@@ -30,7 +30,8 @@ fi
 echo 4
 
 if [ "$1" = 'artemis-server' ]; then
-	set -- gosu artemis "./artemis" "run"
+#	set -- gosu artemis "./artemis" "run"
+    set -- ./artemis run
 fi
 
 echo 5
