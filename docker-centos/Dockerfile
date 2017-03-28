@@ -163,8 +163,8 @@ EXPOSE 7080 7081
 
 COPY docker-entrypoint.sh ${ARTEMIS_INSTANCE_HOME}/bin
 
-COPY common-0.9.0.jar /opt/$ARTEMIS_VERSION/lib
-COPY dns-0.9.0.jar /opt/$ARTEMIS_VERSION/lib
+COPY common-0.9.0.jar /opt/apache-artemis-$ARTEMIS_VERSION/lib
+COPY dns-0.9.0.jar /opt/apache-artemis-$ARTEMIS_VERSION/lib
 COPY broker.xml ${ARTEMIS_INSTANCE_HOME}/etc
 #COPY broker-no-ssl.xml ${ARTEMIS_INSTANCE_HOME}/etc/broker.xml
 
