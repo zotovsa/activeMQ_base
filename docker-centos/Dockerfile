@@ -124,13 +124,6 @@ RUN cd ${ARTEMIS_INSTANCE_HOME}/etc && \
     -u "/amq:broker/amq:web/@bind" \
     -v "http://0.0.0.0:8161" bootstrap.xml
 
-RUN chown -R artemis.artemis ${ARTEMIS_INSTANCE_HOME}
-
-### !!!!! SHOULD WE USE NEXT??????
-RUN chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/data && \
-    chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/tmp 
-
-
 
 # Web Server
 EXPOSE 8161
@@ -177,12 +170,22 @@ COPY jgroups.xml ${ARTEMIS_INSTANCE_HOME}/etc
 COPY logging.properties ${ARTEMIS_INSTANCE_HOME}/etc
 COPY broker.jks ${ARTEMIS_INSTANCE_HOME}/etc
 
-RUN  chgrp -R 0     ${ARTEMIS_INSTANCE_HOME} && \
+
+
+RUN chown -R artemis.artemis ${ARTEMIS_INSTANCE_HOME}
+
+### !!!!! SHOULD WE USE NEXT??????
+RUN chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/data && \
+    chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/tmp 
+
+
+
+RUN  chgrp -R 1001     ${ARTEMIS_INSTANCE_HOME} && \
      chmod -R g+rwX ${ARTEMIS_INSTANCE_HOME}
 
      
 RUN chmod -R a+x ${ARTEMIS_INSTANCE_HOME}/bin
-#RUN chgrp 0   ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh 
+#RUN chgrp 1001   ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh 
 
 WORKDIR /var/lib/artemis/bin
 ENTRYPOINT ["/var/lib/artemis/bin/docker-entrypoint.sh"]
