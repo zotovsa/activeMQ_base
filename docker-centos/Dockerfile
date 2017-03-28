@@ -176,6 +176,8 @@ COPY broker.jks ${ARTEMIS_INSTANCE_HOME}/etc
 
 RUN chown -R artemis.artemis ${ARTEMIS_INSTANCE_HOME}
 
+RUN ls -la /var/lib/artemis/
+
 ### !!!!! SHOULD WE USE NEXT??????
 #RUN chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/data && \
 #    chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/tmp 
