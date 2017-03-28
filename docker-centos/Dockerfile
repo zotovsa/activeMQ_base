@@ -186,7 +186,7 @@ RUN  chgrp -R 1001     ${ARTEMIS_INSTANCE_HOME} && \
      
 RUN chmod -R a+x ${ARTEMIS_INSTANCE_HOME}/bin
 #RUN chgrp 1001   ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh 
-
+USER 1000
 WORKDIR /var/lib/artemis/bin
 ENTRYPOINT ["/var/lib/artemis/bin/docker-entrypoint.sh"]
 CMD ["artemis-server"]
