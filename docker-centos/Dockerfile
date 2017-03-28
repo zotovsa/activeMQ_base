@@ -181,8 +181,8 @@ RUN  chgrp -R 0     ${ARTEMIS_INSTANCE_HOME} && \
      chmod -R g+rwX ${ARTEMIS_INSTANCE_HOME}
 
      
-RUN chmod a+x ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh
-RUN chgrp 0   ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh 
+RUN chmod -R a+x ${ARTEMIS_INSTANCE_HOME}/bin
+#RUN chgrp 0   ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh 
 
 WORKDIR /var/lib/artemis/bin
 ENTRYPOINT ["/var/lib/artemis/bin/docker-entrypoint.sh"]
