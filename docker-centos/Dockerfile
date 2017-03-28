@@ -152,13 +152,12 @@ EXPOSE 7080 7081
 
 
 
-USER 1000
 
 
 # Expose some outstanding folders
-VOLUME ["${ARTEMIS_INSTANCE_HOME}/data"]
-VOLUME ["${ARTEMIS_INSTANCE_HOME}/tmp"]
-VOLUME ["${ARTEMIS_INSTANCE_HOME}/etc"]
+#VOLUME ["${ARTEMIS_INSTANCE_HOME}/data"]
+#VOLUME ["${ARTEMIS_INSTANCE_HOME}/tmp"]
+#VOLUME ["${ARTEMIS_INSTANCE_HOME}/etc"]
 
 
 
@@ -190,6 +189,8 @@ RUN ls -la /var/lib/artemis/
 
 #RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME}/etc
 #RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME}/tmp
+
+USER 1000
 
 #RUN chmod -R a+x ${ARTEMIS_INSTANCE_HOME}/bin
 WORKDIR /var/lib/artemis/bin
