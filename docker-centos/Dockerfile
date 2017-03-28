@@ -174,7 +174,7 @@ COPY broker.jks ${ARTEMIS_INSTANCE_HOME}/etc
 
 
 
-RUN chown -R artemis.artemis ${ARTEMIS_INSTANCE_HOME}
+#RUN chown -R artemis.artemis ${ARTEMIS_INSTANCE_HOME}
 
 RUN ls -la /var/lib/artemis/
 
