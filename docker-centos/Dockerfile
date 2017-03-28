@@ -177,17 +177,18 @@ COPY broker.jks ${ARTEMIS_INSTANCE_HOME}/etc
 RUN chown -R artemis.artemis ${ARTEMIS_INSTANCE_HOME}
 
 ### !!!!! SHOULD WE USE NEXT??????
-RUN chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/data && \
-    chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/tmp 
+#RUN chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/data && \
+#    chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/tmp 
 
 
 
-RUN  chgrp -R 1001     ${ARTEMIS_INSTANCE_HOME} && \
+RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME} && \
      chmod -R g+rwX ${ARTEMIS_INSTANCE_HOME}
 
-     
+RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME}/etc
+RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME}/tmp
+
 RUN chmod -R a+x ${ARTEMIS_INSTANCE_HOME}/bin
-#RUN chgrp 1001   ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh 
 USER 1000
 WORKDIR /var/lib/artemis/bin
 ENTRYPOINT ["/var/lib/artemis/bin/docker-entrypoint.sh"]
