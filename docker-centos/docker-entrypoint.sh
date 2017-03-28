@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+#set -e
 whoami
 
 # Log to tty to enable docker logs container-name
