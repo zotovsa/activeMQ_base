@@ -176,7 +176,7 @@ COPY jgroups.xml ${ARTEMIS_INSTANCE_HOME}c
 COPY logging.properties ${ARTEMIS_INSTANCE_HOME}/etc
 COPY broker.jks ${ARTEMIS_INSTANCE_HOME}/etc
 
-RUN chmod a+x /var/lib/artemis/docker-entrypoint.sh \
+RUN chmod a+x /var/lib/artemis/docker-entrypoint.sh && \
     chgrp 0 /var/lib/artemis/docker-entrypoint.sh 
 
 RUN  chgrp -R 0 ${ARTEMIS_INSTANCE_HOME} && \
