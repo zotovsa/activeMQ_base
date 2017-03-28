@@ -152,6 +152,7 @@ EXPOSE 7080 7081
 
 
 
+USER 1000
 
 
 # Expose some outstanding folders
@@ -191,7 +192,6 @@ RUN ls -la /var/lib/artemis/
 #RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME}/tmp
 
 #RUN chmod -R a+x ${ARTEMIS_INSTANCE_HOME}/bin
-USER 1000
 WORKDIR /var/lib/artemis/bin
 ENTRYPOINT ["/var/lib/artemis/bin/docker-entrypoint.sh"]
 CMD ["artemis-server"]
