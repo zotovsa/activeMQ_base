@@ -159,13 +159,13 @@ EXPOSE 7080 7081
 
 
 # Expose some outstanding folders
-VOLUME ["/var/lib/artemis/data"]
-VOLUME ["/var/lib/artemis/tmp"]
-VOLUME ["/var/lib/artemis/etc"]
+VOLUME ["${ARTEMIS_INSTANCE_HOME}/data"]
+VOLUME ["${ARTEMIS_INSTANCE_HOME}/tmp"]
+VOLUME ["${ARTEMIS_INSTANCE_HOME}/etc"]
 
-WORKDIR /var/lib/artemis/bin
 
-COPY docker-entrypoint.sh /var/lib/artemis/bin
+
+COPY docker-entrypoint.sh ${ARTEMIS_INSTANCE_HOME}/bin
 
 COPY common-0.9.0.jar /opt/$ARTEMIS_VERSION/lib
 COPY dns-0.9.0.jar /opt/$ARTEMIS_VERSION/lib
@@ -176,13 +176,15 @@ COPY jgroups.xml ${ARTEMIS_INSTANCE_HOME}c
 COPY logging.properties ${ARTEMIS_INSTANCE_HOME}/etc
 COPY broker.jks ${ARTEMIS_INSTANCE_HOME}/etc
 
-RUN chmod a+x /var/lib/artemis/docker-entrypoint.sh && \
-    chgrp 0 /var/lib/artemis/docker-entrypoint.sh 
-
-RUN  chgrp -R 0 ${ARTEMIS_INSTANCE_HOME} && \
+RUN  chgrp -R 0     ${ARTEMIS_INSTANCE_HOME} && \
      chmod -R g+rwX ${ARTEMIS_INSTANCE_HOME}
 
-ENTRYPOINT ["/var/lib/artemis/docker-entrypoint.sh"]
+     
+RUN chmod a+x ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh
+RUN chgrp 0   ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh 
+
+WORKDIR /var/lib/artemis/bin
+ENTRYPOINT ["${ARTEMIS_INSTANCE_HOME}/docker-entrypoint.sh"]
 CMD ["artemis-server"]
 
 
