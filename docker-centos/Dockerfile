@@ -182,13 +182,13 @@ RUN chown -R artemis.artemis ${ARTEMIS_INSTANCE_HOME}
 
 
 
-RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME} && \
-     chmod -R g+rwX ${ARTEMIS_INSTANCE_HOME}
+#RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME} 
+#RUN  chmod -R g+rwX ${ARTEMIS_INSTANCE_HOME}
 
-RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME}/etc
-RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME}/tmp
+#RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME}/etc
+#RUN  chgrp -R 1001  ${ARTEMIS_INSTANCE_HOME}/tmp
 
-RUN chmod -R a+x ${ARTEMIS_INSTANCE_HOME}/bin
+#RUN chmod -R a+x ${ARTEMIS_INSTANCE_HOME}/bin
 USER 1000
 WORKDIR /var/lib/artemis/bin
 ENTRYPOINT ["/var/lib/artemis/bin/docker-entrypoint.sh"]
