@@ -25,7 +25,7 @@ ENV JAVA_VERSION=8u101 \
 
 # add user and group for artemis
 ##RUN groupadd -r artemis && useradd -r -g artemis artemis
-RUN groupadd -g 1001 -r artemis && useradd -u 1000 -r -g artemis -d ${ARTEMIS_INSTANCE_HOME} artemis
+# RUN groupadd -g 1001 -r artemis && useradd -u 1000 -r -g artemis -d ${ARTEMIS_INSTANCE_HOME} artemis
 
 ##
 # Upgrading system, download java
