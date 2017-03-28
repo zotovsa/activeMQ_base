@@ -32,7 +32,9 @@ RUN groupadd -g 1001 -r artemis && useradd -u 1000 -r -g artemis -d ${ARTEMIS_IN
 RUN yum -y upgrade && yum -y install \
     curl  \
     tar  \
-    wget && yum clean all -y
+    wget \
+    nss_wrapper \ 
+    gettext && yum clean all -y
 
 
 RUN yum install -y libaio && \
