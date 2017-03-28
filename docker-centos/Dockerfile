@@ -127,7 +127,8 @@ RUN cd ${ARTEMIS_INSTANCE_HOME}/etc && \
 RUN chown -R artemis.artemis ${ARTEMIS_INSTANCE_HOME}
 
 ### !!!!! SHOULD WE USE NEXT??????
-RUN chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/data && chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/tmp 
+RUN chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/data && \
+    chmod -R a+w ${ARTEMIS_INSTANCE_HOME}/tmp 
 
 
 
@@ -172,7 +173,7 @@ COPY dns-0.9.0.jar /opt/$ARTEMIS_VERSION/lib
 COPY broker.xml ${ARTEMIS_INSTANCE_HOME}/etc
 #COPY broker-no-ssl.xml ${ARTEMIS_INSTANCE_HOME}/etc/broker.xml
 
-COPY jgroups.xml ${ARTEMIS_INSTANCE_HOME}c
+COPY jgroups.xml ${ARTEMIS_INSTANCE_HOME}/etc
 COPY logging.properties ${ARTEMIS_INSTANCE_HOME}/etc
 COPY broker.jks ${ARTEMIS_INSTANCE_HOME}/etc
 
@@ -184,7 +185,7 @@ RUN chmod a+x ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh
 RUN chgrp 0   ${ARTEMIS_INSTANCE_HOME}/bin/docker-entrypoint.sh 
 
 WORKDIR /var/lib/artemis/bin
-ENTRYPOINT ["${ARTEMIS_INSTANCE_HOME}/docker-entrypoint.sh"]
+ENTRYPOINT ["/var/lib/artemis/bin/docker-entrypoint.sh"]
 CMD ["artemis-server"]
 
 
