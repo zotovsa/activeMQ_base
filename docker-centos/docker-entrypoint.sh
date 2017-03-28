@@ -1,5 +1,6 @@
 #!/bin/bash
 #set -e
+whoami
 
 # Log to tty to enable docker logs container-name
 sed -i "s/logger.handlers=.*/logger.handlers=CONSOLE/g" ../etc/logging.properties
