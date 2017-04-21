@@ -41,7 +41,7 @@ RUN yum -y upgrade && yum -y install \
 #    wget "http://dl.fedoraproject.org/pub/epel/7/x86_64/x/xmlstarlet-1.6.1-1.el7.x86_64.rpm" -O /tmp/xmlstartlet.rpm && \
 #    yum install -y /tmp/xmlstartlet.rpm && \
 #    yum clean all -y
-RUN yum install epel-release
+RUN yum install -y epel-release
     yum install -y libaio && \
     yum install -y  xmlstarlet \
     yum clean all -y
