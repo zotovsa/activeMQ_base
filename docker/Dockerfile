@@ -20,18 +20,18 @@ RUN apt-get -qq -o=Dpkg::Use-Pty=0 update && apt-get -qq install -y --no-install
 	&& chmod +x /usr/local/bin/gosu
 
 # Uncompress and validate
-RUN cd /opt && wget -q http://www-us.apache.org/dist/activemq/activemq-artemis/1.5.3/apache-artemis-1.5.3-bin.tar.gz && \
-  wget -q http://www.us.apache.org/dist/activemq/activemq-artemis/1.5.3/apache-artemis-1.5.3-bin.tar.gz.asc && \
+RUN cd /opt && wget -q http://www-us.apache.org/dist/activemq/activemq-artemis/2.0.0/apache-artemis-2.0.0-bin.tar.gz && \
+  wget -q http://www.us.apache.org/dist/activemq/activemq-artemis/2.0.0/apache-artemis-2.0.0-bin.tar.gz.asc && \
   wget -q http://apache.org/dist/activemq/KEYS && \
   gpg --import KEYS && \
-  gpg apache-artemis-1.5.3-bin.tar.gz.asc && \
-  tar xfz apache-artemis-1.5.3-bin.tar.gz && \
-  ln -s apache-artemis-1.5.3 apache-artemis && \
-  rm -f apache-artemis-1.5.3-bin.tar.gz KEYS apache-artemis-1.5.3-bin.tar.gz.asc
+  gpg apache-artemis-2.0.0-bin.tar.gz.asc && \
+  tar xfz apache-artemis-2.0.0-bin.tar.gz && \
+  ln -s apache-artemis-2.0.0 apache-artemis && \
+  rm -f apache-artemis-2.0.0-bin.tar.gz KEYS apache-artemis-2.0.0-bin.tar.gz.asc
 
 # Create broker instance
 RUN cd /var/lib && \
-  /opt/apache-artemis-1.5.3/bin/artemis create artemis \
+  /opt/apache-artemis-2.0.0/bin/artemis create artemis \
     --home /opt/apache-artemis \
     --user artemis \
     --password artemis \
@@ -77,8 +77,8 @@ WORKDIR /var/lib/artemis/bin
 
 COPY docker-entrypoint.sh /
 
-COPY common-0.9.0.jar /opt/apache-artemis-1.5.3/lib
-COPY dns-0.9.0.jar /opt/apache-artemis-1.5.3/lib
+COPY common-0.9.0.jar /opt/apache-artemis-2.0.0/lib
+COPY dns-0.9.0.jar /opt/apache-artemis-2.0.0/lib
 COPY broker.xml /var/lib/artemis/etc
 #COPY broker-no-ssl.xml /var/lib/artemis/etc/broker.xml
 
