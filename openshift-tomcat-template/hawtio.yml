@@ -1,0 +1,119 @@
+apiVersion: v1
+kind: Template
+metadata:
+  creationTimestamp: null
+  name: tomcat-hawtio
+  annotations:
+    description: "tomcat hawtio"
+    iconClass: "icon-jboss"
+    tags: "tomcat hawtio"
+objects:
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: tomcat
+  spec:
+    dockerImageRepository: tomcat
+- apiVersion: v1
+  kind: ImageStream
+  metadata:
+    creationTimestamp: null
+    name: tomcat-hawtio-base
+- apiVersion: v1
+  kind: BuildConfig
+  metadata:
+    creationTimestamp: null
+    name: tomcat-hawtio-base
+  spec:
+    output:
+      to:
+        kind: ImageStreamTag
+        name: tomcat-hawtio-base:latest
+    resources: {}
+    source:
+      git:
+        ref: master
+        uri: https://github.com/zotovsa/activeMQ_base.git
+      contextDir: docker-hawtio
+      type: Git
+    strategy:
+      type: Docker
+    triggers:
+    - type: ConfigChange
+    - imageChange: {}
+      type: ImageChange
+  status:
+    lastVersion: 0
+- apiVersion: v1
+  kind: DeploymentConfig
+  metadata:
+    creationTimestamp: null
+    name: tomcat-hawtio
+  spec:
+    replicas: 1
+    selector:
+      deploymentconfig: tomcat-hawtio
+    strategy:
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          deploymentconfig: tomcat-hawtio
+      spec:
+        containers:
+          image: tomcat-hawtio-base:latest
+          imagePullPolicy: Always
+          name: artemis-cluster
+          livenessProbe:
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - artemis-cluster
+        from:
+          kind: ImageStreamTag
+          name: artemis-cluster-base:latest
+      type: ImageChange
+  status: {}
+  
+- apiVersion: v1
+  kind: Service
+  metadata:
+    creationTimestamp: null
+    name: tomcat-hawtio
+  spec:
+    ports:
+    - name: 8080-tcp
+      port: 8080
+      protocol: TCP
+      targetPort: 8080
+    selector:
+      deploymentconfig: tomcat-hawtio
+    sessionAffinity: None
+    type: ClusterIP
+    portalIP: None
+    clusterIP: None
+  status:
+    loadBalancer: {}
