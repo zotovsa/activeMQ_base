@@ -69,9 +69,10 @@ objects:
           deploymentconfig: tomcat-hawtio
       spec:
         containers:
+        - env:
           image: tomcat-hawtio-base:latest
           imagePullPolicy: Always
-          name: artemis-cluster
+          name: tomcat-hawtio
           livenessProbe:
             tcpSocket:
               port: 8080
@@ -91,10 +92,10 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - artemis-cluster
+        - tomcat-hawtio
         from:
           kind: ImageStreamTag
-          name: artemis-cluster-base:latest
+          name: tomcat-hawtio-base:latest
       type: ImageChange
   status: {}
   
